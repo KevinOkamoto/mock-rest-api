@@ -4,8 +4,16 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-
 const bodyParser = require('body-parser');
+
+/**
+ * Set up for displaying home page
+ */
+const fs = require('fs');
+const readme = fs.readFileSync('./README.md', 'utf8');
+const showdown = require('showdown');
+const converter = new showdown.Converter();
+const homepage = converter.makeHtml(readme);
 
 /**
  * Set up Mongoose
@@ -34,7 +42,7 @@ const Response = mongoose.model('Response', responseSchema);
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send(homepage);
 });
 
 app.post('/_save_', (req, res) => {
