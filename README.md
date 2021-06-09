@@ -1,4 +1,4 @@
-# mock-rest-api
+# Mock REST API
 
 ## Set Up
 
@@ -16,3 +16,23 @@ To stop the application, use the command:
 ```
 docker-compose down
 ```
+
+## Usage
+
+To add an entry to the Mock REST API, perform a POST to `http://localhost:3000/_save_` with the following JSON body:
+
+```json
+{
+    "key": "/user/123",
+    "method": "GET",
+    "body": {
+        "id": "123",
+        "name": "Abby Apple",
+        "favoriteColor": "red"
+    },
+    "headers": { }
+}
+```
+
+You can then retreive the `body` data at the URI: `http://localhost:3000/user/123`.
+
