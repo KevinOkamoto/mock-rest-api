@@ -7,6 +7,8 @@ services:
             - "3000:3000"
     mongo:
         container_name: mongo
+        volumes:
+            - './data:/data/db'
         image: mongo
         ports:
             - "27017:27107"
