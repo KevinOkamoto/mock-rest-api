@@ -55,8 +55,6 @@ app.post('/_save_', (req, res) => {
     if (!data.body) {
         return res.status(400).send('Missing attribute: "body"');
     }
-
-    console.log('Saving new record by key #3: ', data.key);
     Response.findOneAndUpdate(
         {
             key: data.key,
@@ -69,30 +67,34 @@ app.post('/_save_', (req, res) => {
         },
         {
             upsert: true,
-            new: true,
-        }, (err, response) => {
-            if (err) return console.error(err);
-            res.send('Entry saved');
-        });
-
-
-    app.all('*', (req, res, next) => {
-        Response.findOne({
-            key: req.path
+            useFindAndModify: false
         }, (err, response) => {
             if (err) {
                 console.error(err);
-                res.status(400).send('System error');
-            } else if (!response || !response.body) {
-                console.log('Not found: ' + req.path);
-                res.status(404).send('Not found');
-            } else {
-                res.send(JSON.parse(response.body));
+                res.send('Problem while saving record :', err);
             }
-            next();
+            res.send('Entry saved');
         });
-    });
+});
 
-    app.listen(port, () => {
-        console.log(`Mock REST API is listening at http://localhost:${port}`);
+
+app.all('*', (req, res, next) => {
+    Response.findOne({
+        key: req.path
+    }, (err, response) => {
+        if (err) {
+            console.error(err);
+            res.status(400).send('System error');
+        } else if (!response || !response.body) {
+            console.log('Not found: ' + req.path);
+            res.status(404).send('Not found');
+        } else {
+            res.send(JSON.parse(response.body));
+        }
+        next();
     });
+});
+
+app.listen(port, () => {
+    console.log(`Mock REST API is listening at http://localhost:${port}`);
+});
