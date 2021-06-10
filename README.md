@@ -36,3 +36,27 @@ To add an entry to the Mock REST API, perform a POST to `http://localhost:3000/_
 
 You can then retreive the `body` data at the URI: `http://localhost:3000/user/123`.
 
+# MongoDB
+
+We are using mongodb, with specific settings to read DB files outside of this docker image from 
+`./data `local folder.
+
+To work directly with mongo db you can can switch to docker bash and connect to db:
+
+```
+docker exec -it mongo bash
+mongo mongodb://mongo:27017/mockrestapi
+
+```
+
+Once you are in mongo shell , then you can use common mongo commands such as:
+
+```
+// retrive all records
+db.responses.find() 
+
+
+// remove all records
+db.responses.remove({})
+
+```
