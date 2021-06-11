@@ -6,6 +6,7 @@ const app = express();
 const port = 3000;
 const bodyParser = require('body-parser');
 const conf = require('./conf/known-rest-api');
+const util = require('./src/util');
 
 /**
  * Set up for displaying home page
@@ -53,8 +54,6 @@ app.get('/', (req, res) => {
 });
 
 app.post('/_save_', (req, res) => {
-    console.log('###:SAVE() => ', req.body);
-
     const data = req.body;
     if (!data.key) {
         return res.status(400).send('Missing attribute: "key"');
@@ -63,12 +62,13 @@ app.post('/_save_', (req, res) => {
         return res.status(400).send('Missing attribute: "body"');
     }
 
+	const key = util.prepareKey(data.key);
     Response.findOneAndUpdate(
         {
-            key: data.key,
+            key: key,
         },
         {
-            key: data.key,
+            key: key,
             method: data.method,
             headers: data.headers ? data.headers : null,
             body: data.body
@@ -87,23 +87,22 @@ app.post('/_save_', (req, res) => {
 
 
 app.all('*', (req, res, next) => {
-    const fullUrl = req.protocol + '://' + req.headers.host + req.url;
-    console.log(fullUrl);
+    // const fullUrl = req.protocol + '://' + req.headers.host + req.url;
+    // console.log(fullUrl);
 
-    const matched = conf["rest-uri"].filter((uri) => {
-        const escaped = uri.replace(/[-\/\\^$+?()|[\]{}]/g, '\\$&').replace('https', '(http|https)');
-        expression = new RegExp(escaped);
-        return expression.test(fullUrl);
-    });
+    // const matched = conf["rest-uri"].filter((uri) => {
+    //     const escaped = uri.replace(/[-\/\\^$+?()|[\]{}]/g, '\\$&').replace('https', '(http|https)');
+    //     expression = new RegExp(escaped);
+    //     return expression.test(fullUrl);
+    // });
 
-    if (matched.length > 0) {
-        console.log('matched URL: ', matched[0].replace(/[-\/\\^$+?()|[\]{}]/g, '\\$&').replace('https', '(http|https)'));
-    }
-
-
+    // if (matched.length > 0) {
+    //     console.log('matched URL: ', matched[0].replace(/[-\/\\^$+?()|[\]{}]/g, '\\$&').replace('https', '(http|https)'));
+    // }
 
     Response.findOne({
-        key: {$regex: matched[0], $options: 'i'},
+        // key: {$regex: matched[0], $options: 'i'},
+		key: req.originalUrl
     }, (err, response) => {
         if (err) {
             console.error(err);
