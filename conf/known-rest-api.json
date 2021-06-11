@@ -1,0 +1,30 @@
+{
+  "rest-uri": [
+    "https://.*/gb/i18n/en/all-ng4.json",
+    "https://.*/gb/usercontext?gbst=null&realm=.*&isoauth=false",
+    "https://.*/gb/tenant/.*/content-translation/en_landingpagetitles?name=en%2Flandingpagetitles.json",
+    "https://.*/gb/i18n/en/merge-i18n.json",
+    "https://siteintercept.qualtrics.com/WRSiteInterceptEngine/Targeting.php?Q_ZoneID=.*&Q_CLIENTVERSION=1.52.0&Q_CLIENTTYPE=web",
+    "https://.*/gb/tenant/cirrusatlanticsuite/user/9732c83e3e03fffde2ee65a9d826df8c4dd623c27fb92b952fe62a02f0726f87/quickTranslate/en?browserRequestId=quickTranslate1623411893425",
+    "https://.*/gb/tenant/cirrusatlanticsuite//getPolicyTriggerFields",
+    "https://.*/gb/tenant/.*//getPolicyTriggerFields",
+    "https://.*/gb/tenant/.*/user/.*/quickTranslate/en?browserRequestId=quickTranslate1623411893455",
+    "https://.*/gb/currencies/currencyListForTenant",
+    "https://.*/gb/tenant/.*/user/.*/requisition/obo",
+    "https://.*/gb/tenant/.*/user/.*/resource/wellknown/PopularPage",
+    "https://.*/gb/tenant/.*/getPolicyTriggerFields",
+    "https://.*/gb/team?skip=0&top=200&roles=TEAM_OWNER,TEAM_CONTRIBUTOR",
+    "https://.*/gb/tenant/.*/content-translation/en_MyHomePage?name=en%2FMyHomePage.json",
+    "https://.*/gb/announcement?sort=startDateDesc",
+    "https://.*/gb/tenant/.*/user/.*/resource/container/.*?browserRequestId=.*&pu=US100&puHierarchyPath=.*,All",
+    "https://.*/gb/tenant/.*/content-translation/.*?name=en%2Ff46f7b6c-aa70-4694-88a2-de319a607d6c.json",
+    "https://.*/gb/tenant/.*/user/.*/recommendations?recommendationType=landingPage",
+    "https://.*/gb/tenant/.*/user/.*//field/buyerBooleanParameter?paramName=Application.User.DisableDelegateAuthority",
+    "https://.*/gb/tenant/.*/user/.*/shoppingCart",
+    "https://.*/gb/tenant/.*/user/.*/requisition/retrieve?count=3&status=all",
+    "https://.*/gb/tenant/.*/user/.*/notifications",
+    "https://.*/gb/tenant/.*/user/.*/authAucToken"
+  ]
+}
+
+

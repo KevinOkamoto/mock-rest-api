@@ -5,6 +5,7 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const bodyParser = require('body-parser');
+const conf = require('./conf/known-rest-api');
 
 /**
  * Set up for displaying home page
@@ -25,7 +26,7 @@ mongoose.connect(mongodbUrl, {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error 😢'));
 db.once('open', function () {
-    console.log('Connected to DB v3🚀');
+    console.log('Connected to DB v4.1🚀');
 });
 
 /**
@@ -40,11 +41,11 @@ const responseSchema = new mongoose.Schema({
 
 // Mocks is the name of mongo db collection
 const Response = mongoose.model('Response', responseSchema);
-app.use( bodyParser.json({limit: '50mb'}) );
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({
     limit: '50mb',
     extended: true,
-    parameterLimit:50000
+    parameterLimit: 50000
 }));
 
 app.get('/', (req, res) => {
@@ -52,7 +53,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/_save_', (req, res) => {
-    console.log('###:SAVE() => ' , req.body);
+    console.log('###:SAVE() => ', req.body);
 
     const data = req.body;
     if (!data.key) {
@@ -86,8 +87,23 @@ app.post('/_save_', (req, res) => {
 
 
 app.all('*', (req, res, next) => {
+    const fullUrl = req.protocol + '://' + req.headers.host + req.url;
+    console.log(fullUrl);
+
+    const matched = conf["rest-uri"].filter((uri) => {
+        const escaped = uri.replace(/[-\/\\^$+?()|[\]{}]/g, '\\$&').replace('https', '(http|https)');
+        expression = new RegExp(escaped);
+        return expression.test(fullUrl);
+    });
+
+    if (matched.length > 0) {
+        console.log('matched URL: ', matched[0].replace(/[-\/\\^$+?()|[\]{}]/g, '\\$&').replace('https', '(http|https)'));
+    }
+
+
+
     Response.findOne({
-        key: req.path
+        key: {$regex: matched[0], $options: 'i'},
     }, (err, response) => {
         if (err) {
             console.error(err);
@@ -96,6 +112,7 @@ app.all('*', (req, res, next) => {
             console.log('Not found: ' + req.path);
             res.status(404).send('Not found');
         } else {
+
             res.send(JSON.parse(response.body));
         }
         next();
