@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "GB Mock API Dumper",
+  "version": "1.0.0",
+  "description": "",
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+
+  "background": {
+    "scripts": [
+      "background/index.js"
+    ]
+  },
+  "web_accessible_resources": [
+    "assets/icons/*.png"
+  ],
+  "permissions": [
+    "storage",
+    "webRequest",
+    "tabs",
+    "debugger",
+    "webRequestBlocking",
+    "*://*/*"
+  ]
+}

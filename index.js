@@ -25,7 +25,7 @@ mongoose.connect(mongodbUrl, {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error 😢'));
 db.once('open', function () {
-    console.log('Connected to DB 🚀');
+    console.log('Connected to DB v3🚀');
 });
 
 /**
@@ -34,20 +34,26 @@ db.once('open', function () {
 const responseSchema = new mongoose.Schema({
     key: String,
     method: String,
-    headers: String,
-    body: String,
+    headers: {},
+    body: {},
 });
 
 // Mocks is the name of mongo db collection
 const Response = mongoose.model('Response', responseSchema);
-
-app.use(bodyParser.json());
+app.use( bodyParser.json({limit: '50mb'}) );
+app.use(bodyParser.urlencoded({
+    limit: '50mb',
+    extended: true,
+    parameterLimit:50000
+}));
 
 app.get('/', (req, res) => {
     res.send(homepage);
 });
 
 app.post('/_save_', (req, res) => {
+    console.log('###:SAVE() => ' , req.body);
+
     const data = req.body;
     if (!data.key) {
         return res.status(400).send('Missing attribute: "key"');
@@ -55,6 +61,7 @@ app.post('/_save_', (req, res) => {
     if (!data.body) {
         return res.status(400).send('Missing attribute: "body"');
     }
+
     Response.findOneAndUpdate(
         {
             key: data.key,
@@ -62,8 +69,8 @@ app.post('/_save_', (req, res) => {
         {
             key: data.key,
             method: data.method,
-            headers: data.headers ? JSON.stringify(data.headers) : null,
-            body: JSON.stringify(data.body)
+            headers: data.headers ? data.headers : null,
+            body: data.body
         },
         {
             upsert: true,
