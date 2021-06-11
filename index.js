@@ -99,7 +99,6 @@ app.all('*', (req, res, next) => {
     // if (matched.length > 0) {
     //     console.log('matched URL: ', matched[0].replace(/[-\/\\^$+?()|[\]{}]/g, '\\$&').replace('https', '(http|https)'));
     // }
-
     Response.findOne({
         // key: {$regex: matched[0], $options: 'i'},
 		key: req.originalUrl
@@ -111,8 +110,7 @@ app.all('*', (req, res, next) => {
             console.log('Not found: ' + req.path);
             res.status(404).send('Not found');
         } else {
-
-            res.send(JSON.parse(response.body));
+            res.send(response.body);
         }
         next();
     });
