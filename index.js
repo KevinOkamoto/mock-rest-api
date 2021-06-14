@@ -27,7 +27,7 @@ mongoose.connect(mongodbUrl, {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error 😢'));
 db.once('open', function () {
-    console.log('Connected to DB v4.1🚀');
+    console.log('Connected to DB v4.4🚀');
 });
 
 /**
@@ -97,6 +97,11 @@ app.all('*', (req, res, next) => {
             console.log('Not found: ' + req.path);
             res.status(404).send('Not found');
         } else {
+            res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type, Accept,Authorization,Origin");
+            res.setHeader("Access-Control-Allow-Origin", "*");
+            res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+            res.setHeader("Access-Control-Allow-Credentials", true);
+
             res.send(response.body);
         }
         next();

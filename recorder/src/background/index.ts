@@ -60,11 +60,13 @@ import WebResponseHeadersDetails = chrome.webRequest.WebResponseHeadersDetails;
 
 
     chrome.webRequest.onHeadersReceived.addListener((resp: WebResponseHeadersDetails) => {
-        resp.responseHeaders.push({
-            'name': 'Access-Control-Allow-Origin',
-            'value': '*'
-        });
-        return {responseHeaders: resp.responseHeaders};
+        const responseHeaders = resp.responseHeaders;
+        responseHeaders = responseHeaders.filter(elem => elem.name.toLowerCase() !== 'access-control-allow-origin' && elem.name.toLowerCase() !== 'access-control-allow-methods' )
+        responseHeaders.push({'name': 'Access-Control-Allow-Origin','value': '*'});
+        responseHeaders.push({'name': 'Access-Control-Allow-Methods', 'value': 'GET, PUT, POST, DELETE, HEAD, OPTIONS'});
+
+
+        return {responseHeaders};
     }, networkFilters, ['blocking', 'responseHeaders']);
 
 
