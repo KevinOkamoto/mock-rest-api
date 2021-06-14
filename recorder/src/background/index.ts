@@ -1,4 +1,5 @@
 import WebRequestBodyDetails = chrome.webRequest.WebRequestBodyDetails;
+import WebResponseHeadersDetails = chrome.webRequest.WebResponseHeadersDetails;
 
 (function () {
     const networkFilters = {
@@ -10,6 +11,8 @@ import WebRequestBodyDetails = chrome.webRequest.WebRequestBodyDetails;
     };
 
     const SAVE_URL = 'http://localhost:3000/_save_';
+    const RECORDING_HOST = 's1.ariba.com';
+    const REDIRECT_HOST = 'http://localhost:3000';
     const extraInfoSpecOnCompleted = [
         "extraHeaders"
     ];
@@ -19,8 +22,26 @@ import WebRequestBodyDetails = chrome.webRequest.WebRequestBodyDetails;
     const retryRequests: any[] = [];
 
 
-    chrome.webRequest.onBeforeRequest.addListener(initialListener,
-        networkFilters, ["blocking", "requestBody"]);
+    /**
+     *  Redirecting to local MOCK API
+     */
+    chrome.webRequest.onBeforeRequest.addListener((details: WebRequestBodyDetails) => {
+        if (!isRecording(details.url)
+            && !details.url.includes('sockjs-node')
+            && !details.url.includes(REDIRECT_HOST)) {
+            const url = new URL(details.url);
+            const newURL = details.url.replace(url.origin, REDIRECT_HOST);
+            console.log('Redirecting from ' + url + ' to ' + newURL);
+
+            return {redirectUrl: newURL};
+        }
+
+
+    }, networkFilters, ["blocking", "requestBody"]);
+
+    // Setup for recording
+    chrome.webRequest.onBeforeRequest.addListener(setupRecording, networkFilters,
+        ["blocking", "requestBody"]);
 
     // Read request Headers
     chrome.webRequest.onSendHeaders.addListener((details) => {
@@ -36,6 +57,15 @@ import WebRequestBodyDetails = chrome.webRequest.WebRequestBodyDetails;
         });
 
     }, networkFilters, ['requestHeaders']);
+
+
+    chrome.webRequest.onHeadersReceived.addListener((resp: WebResponseHeadersDetails) => {
+        resp.responseHeaders.push({
+            'name': 'Access-Control-Allow-Origin',
+            'value': '*'
+        });
+        return {responseHeaders: resp.responseHeaders};
+    }, networkFilters, ['blocking', 'responseHeaders']);
 
 
     // Read request Headers
@@ -90,9 +120,9 @@ import WebRequestBodyDetails = chrome.webRequest.WebRequestBodyDetails;
     chrome.debugger.onEvent.addListener(allEventHandler);
 
 
-    function initialListener(details) {
+    function setupRecording(details: WebRequestBodyDetails) {
         const {tabId, requestId, requestBody, method} = details;
-        if (!tabStorage.hasOwnProperty(tabId) || details.url === 'SAVE_URL') {
+        if (!tabStorage.hasOwnProperty(tabId) || details.url === 'SAVE_URL' || !isRecording(details.url)) {
             return;
         }
         const urlID = requestIdByUri(details);
@@ -116,7 +146,9 @@ import WebRequestBodyDetails = chrome.webRequest.WebRequestBodyDetails;
                 chrome.debugger.sendCommand({tabId: tabId}, "Network.enable");
             });
         }
+
     }
+
 
     function allEventHandler(source, method, params) {
         if (!tabStorage.hasOwnProperty(source.tabId) || params.type !== 'XHR') {
@@ -212,6 +244,10 @@ import WebRequestBodyDetails = chrome.webRequest.WebRequestBodyDetails;
         }
     }
 
+    function isRecording(url: string) {
+        return url.includes(RECORDING_HOST)
+    }
+
     function save(request: any) {
         var reqToSave = {
             key: request.fullUrl,
@@ -228,7 +264,7 @@ import WebRequestBodyDetails = chrome.webRequest.WebRequestBodyDetails;
             console.log("** An error occurred during the saving to DB", err);
         };
 
-        xmlhttp.send(JSON.stringify(reqToSave)      );
+        xmlhttp.send(JSON.stringify(reqToSave));
     }
 }());
 
