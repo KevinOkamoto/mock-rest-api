@@ -87,8 +87,9 @@ app.post('/_save_', (req, res) => {
 
 
 app.all('*', (req, res, next) => {
+	const key = util.prepareKey(req.originalUrl);
     Response.findOne({
-		key: req.originalUrl
+		key: key
     }, (err, response) => {
         if (err) {
             console.error(err);
