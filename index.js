@@ -87,20 +87,7 @@ app.post('/_save_', (req, res) => {
 
 
 app.all('*', (req, res, next) => {
-    // const fullUrl = req.protocol + '://' + req.headers.host + req.url;
-    // console.log(fullUrl);
-
-    // const matched = conf["rest-uri"].filter((uri) => {
-    //     const escaped = uri.replace(/[-\/\\^$+?()|[\]{}]/g, '\\$&').replace('https', '(http|https)');
-    //     expression = new RegExp(escaped);
-    //     return expression.test(fullUrl);
-    // });
-
-    // if (matched.length > 0) {
-    //     console.log('matched URL: ', matched[0].replace(/[-\/\\^$+?()|[\]{}]/g, '\\$&').replace('https', '(http|https)'));
-    // }
     Response.findOne({
-        // key: {$regex: matched[0], $options: 'i'},
 		key: req.originalUrl
     }, (err, response) => {
         if (err) {
