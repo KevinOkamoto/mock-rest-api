@@ -10,7 +10,7 @@
     "build:popup": "parcel build src/popup/index.html -d dist/popup --public-url ./",
     "build:devtools": "parcel build src/devtools/index.html -d dist/devtools --public-url ./",
     "build:devtools:app": "parcel build src/devtools/app/index.html -d dist/devtools/app --public-url ./",
-    "build": "npm run build:bg",
+    "build": "npm run build:bg && npm run copy:static",
     "clean": "rimraf dist",
     "copy:static": "copyfiles manifest.json assets/**/* dist",
     "dist": "npm run clean && npm run build && npm run copy:static",
