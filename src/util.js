@@ -1,10 +1,13 @@
 const URL = require('url').URL;
 
-function prepareKey(str) {
+function prepareKey(str, ignoreSearchQuery) {
 	try {
 		const url = new URL(str);
-		return url.pathname + url.search;
+		return ignoreSearchQuery ? url.pathname : url.pathname + url.search;
 	} catch (_) {
+		if (ignoreSearchQuery) {
+			return str.split('?')[0];
+		}
 		return str;
 	}
 }

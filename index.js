@@ -62,7 +62,7 @@ app.post('/_save_', (req, res) => {
         return res.status(400).send('Missing attribute: "body"');
     }
 
-	const key = util.prepareKey(data.key);
+	const key = util.prepareKey(data.key, true);
     Response.findOneAndUpdate(
         {
             key: key,
@@ -87,7 +87,7 @@ app.post('/_save_', (req, res) => {
 
 
 app.all('*', (req, res, next) => {
-	const key = util.prepareKey(req.originalUrl);
+	const key = util.prepareKey(req.originalUrl, true);
     Response.findOne({
 		key: key
     }, (err, response) => {
