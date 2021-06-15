@@ -22,23 +22,6 @@ import WebResponseHeadersDetails = chrome.webRequest.WebResponseHeadersDetails;
     const retryRequests: any[] = [];
 
 
-    /**
-     *  Redirecting to local MOCK API
-     */
-    chrome.webRequest.onBeforeRequest.addListener((details: WebRequestBodyDetails) => {
-        if (!isRecording(details.url)
-            && !details.url.includes('sockjs-node')
-            && !details.url.includes(REDIRECT_HOST)) {
-            const url = new URL(details.url);
-            const newURL = details.url.replace(url.origin, REDIRECT_HOST);
-            console.log('Redirecting from ' + url + ' to ' + newURL);
-
-            return {redirectUrl: newURL};
-        }
-
-
-    }, networkFilters, ["blocking", "requestBody"]);
-
     // Setup for recording
     chrome.webRequest.onBeforeRequest.addListener(setupRecording, networkFilters,
         ["blocking", "requestBody"]);
@@ -58,16 +41,6 @@ import WebResponseHeadersDetails = chrome.webRequest.WebResponseHeadersDetails;
 
     }, networkFilters, ['requestHeaders']);
 
-
-    chrome.webRequest.onHeadersReceived.addListener((resp: WebResponseHeadersDetails) => {
-        const responseHeaders = resp.responseHeaders;
-        responseHeaders = responseHeaders.filter(elem => elem.name.toLowerCase() !== 'access-control-allow-origin' && elem.name.toLowerCase() !== 'access-control-allow-methods' )
-        responseHeaders.push({'name': 'Access-Control-Allow-Origin','value': '*'});
-        responseHeaders.push({'name': 'Access-Control-Allow-Methods', 'value': 'GET, PUT, POST, DELETE, HEAD, OPTIONS'});
-
-
-        return {responseHeaders};
-    }, networkFilters, ['blocking', 'responseHeaders']);
 
 
     // Read request Headers
